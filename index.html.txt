@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>تحليل إنتاج البيض</title>
+
+<style>
+body {
+    font-family: Arial;
+    background: #f4f6f8;
+    text-align: center;
+    padding: 20px;
+}
+.container {
+    background: white;
+    max-width: 450px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+input, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    font-size: 16px;
+}
+button {
+    background: #27ae60;
+    color: white;
+    border: none;
+    border-radius: 8px;
+}
+.gauge {
+    width: 200px;
+    height: 100px;
+    background: #ddd;
+    border-radius: 200px 200px 0 0;
+    position: relative;
+    overflow: hidden;
+    margin: 20px auto;
+}
+.gauge-fill {
+    height: 100%;
+    background: red;
+    transform-origin: center bottom;
+    transform: rotate(0deg);
+    transition: 0.6s;
+}
+.gauge-cover {
+    width: 160px;
+    height: 80px;
+    background: white;
+    border-radius: 160px 160px 0 0;
+    position: absolute;
+    bottom: 0;
+    left: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+}
+.advice {
+    text-align: right;
+    margin-top: 15px;
+    background: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+<h2>🐔 تحليل إنتاج البيض</h2>
+
+<input type="number" id="hens" placeholder="عدد الدجاج">
+
+<select id="type">
+    <option value="baladi">بلدي</option>
+    <option value="improved">بلدي محسّن</option>
+    <option value="layer">بياض</option>
+</select>
+
+<select id="period">
+    <option value="day">يومي</option>
+    <option value="month">شهري</option>
+</select>
+
+<input type="number" id="eggs" placeholder="عدد البيض">
+
+<button onclick="calculate()">حلل الإنتاج</button>
+
+<div class="gauge">
+    <div class="gauge-fill" id="gaugeFill"></div>
+    <div class="gauge-cover" id="gaugeText">0%</div>
+</div>
+
+<div id="status"></div>
+<div class="advice" id="advice"></div>
+</div>
+
+<script>
+function calculate() {
+    let hens = +hensInput.value;
+    let eggs = +eggsInput.value;
+    let period = periodSelect.value;
+    let type = typeSelect.value;
+
+    if (hens <= 0) return alert("دخل عدد الدجاج");
+
+    let maxEggs = (period === "day") ? hens : hens * 30;
+    let percentage = Math.min((eggs / maxEggs) * 100, 100);
+
+    let limits = {
+        baladi: {low:35, mid:55},
+        improved: {low:45, mid:65},
+        layer: {low:65, mid:80}
+    };
+
+    let status="", color="", advice="";
+
+    if (percentage < limits[type].low) {
+        status = "❌ إنتاج ضعيف";
+        color = "red";
+        advice = `
+        🥣 <b>العلف:</b> زيد بروتين (ذرة + صوجا / بقوليات)<br>
+        💡 <b>الضوء:</b> وصل 14 ساعة ضوء/اليوم<br>
+        🩺 <b>الصحة:</b> راقب الإسهال، الزكام، والطفيليات
+        `;
+    } 
+    else if (percentage < limits[type].mid) {
+        status = "⚠️ إنتاج متوسط";
+        color = "orange";
+        advice = `
+        🥣 <b>العلف:</b> راجع التوازن المعدني (كالسيوم)<br>
+        💡 <b>الضوء:</b> ثبت مواعيد الإضاءة<br>
+        🩺 <b>الصحة:</b> فيتامينات طبيعية (ثوم / خل تفاح)
+        `;
+    } 
+    else {
+        status = "✅ إنتاج مزيان";
+        color = "green";
+        advice = `
+        ✔️ حافظ على نفس العلف<br>
+        ✔️ راقب الوزن فقط<br>
+        ✔️ نظافة + تهوية = استمرارية
+        `;
+    }
+
+    gaugeFill.style.transform = `rotate(${percentage * 1.8}deg)`;
+    gaugeFill.style.background = color;
+    gaugeText.innerText = percentage.toFixed(1) + "%";
+    statusDiv.innerText = status;
+    adviceDiv.innerHTML = advice;
+}
+</script>
+
+</body>
+</html>
