@@ -104,12 +104,16 @@ button {
 
 <script>
 function calculate() {
-    let hens = +hensInput.value;
-    let eggs = +eggsInput.value;
-    let period = periodSelect.value;
-    let type = typeSelect.value;
 
-    if (hens <= 0) return alert("دخل عدد الدجاج");
+    let hens = Number(document.getElementById("hens").value);
+    let eggs = Number(document.getElementById("eggs").value);
+    let period = document.getElementById("period").value;
+    let type = document.getElementById("type").value;
+
+    if (hens <= 0 || eggs < 0) {
+        alert("دخل معطيات صحيحة");
+        return;
+    }
 
     let maxEggs = (period === "day") ? hens : hens * 30;
     let percentage = Math.min((eggs / maxEggs) * 100, 100);
@@ -120,45 +124,49 @@ function calculate() {
         layer: {low:65, mid:80}
     };
 
-    let status="", color="", advice="";
+    let status = "";
+    let color = "";
+    let advice = "";
 
     if (percentage < limits[type].low) {
         status = "❌ إنتاج ضعيف";
         color = "red";
         advice = `
-        🥣 <b>العلف:</b> زيد بروتين (ذرة + صوجا / بقوليات)<br>
-        💡 <b>الضوء:</b> وصل 14 ساعة ضوء/اليوم<br>
-        🩺 <b>الصحة:</b> راقب الإسهال، الزكام، والطفيليات
+        🥣 العلف: زيد البروتين<br>
+        💡 الضوء: 14 ساعة/اليوم<br>
+        🩺 الصحة: راقب الأمراض والطفيليات
         `;
     } 
     else if (percentage < limits[type].mid) {
         status = "⚠️ إنتاج متوسط";
         color = "orange";
         advice = `
-        🥣 <b>العلف:</b> راجع التوازن المعدني (كالسيوم)<br>
-        💡 <b>الضوء:</b> ثبت مواعيد الإضاءة<br>
-        🩺 <b>الصحة:</b> فيتامينات طبيعية (ثوم / خل تفاح)
+        🥣 العلف: حسن الكالسيوم<br>
+        💡 الضوء: ثبت الإضاءة<br>
+        🩺 الصحة: فيتامينات طبيعية
         `;
     } 
     else {
         status = "✅ إنتاج مزيان";
         color = "green";
         advice = `
-        ✔️ حافظ على نفس العلف<br>
-        ✔️ راقب الوزن فقط<br>
-        ✔️ نظافة + تهوية = استمرارية
+        ✔️ حافظ على النظام الحالي<br>
+        ✔️ نظافة وتهوية
         `;
     }
 
-    gaugeFill.style.transform = `rotate(${percentage * 1.8}deg)`;
-    gaugeFill.style.background = color;
-    gaugeText.innerText = percentage.toFixed(1) + "%";
-    statusDiv.innerText = status;
-    adviceDiv.innerHTML = advice;
+    document.getElementById("gaugeFill").style.transform =
+        `rotate(${percentage * 1.8}deg)`;
+
+    document.getElementById("gaugeFill").style.background = color;
+    document.getElementById("gaugeText").innerText = percentage.toFixed(1) + "%";
+    document.getElementById("status").innerText = status;
+    document.getElementById("advice").innerHTML = advice;
 }
 </script>
 
 </body>
 </html>
+
 
 
